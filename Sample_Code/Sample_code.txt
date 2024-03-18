@@ -1,0 +1,77 @@
+import numpy as np
+import pandas as pd
+df=pd.read_csv("../cp_LR/input/CarPrice_Assignment.csv")
+df.head()
+# looking the shape DataSet
+print("The Shape DataSet = {} ".format(df.shape))
+#Checking the dtypes of all the columns
+df=pd.read_csv("../cp_LR/input/CarPrice_Assignment.csv")
+df.info()
+#checking null value
+df=pd.read_csv("../cp_LR/input/CarPrice_Assignment.csv")
+df.isnull().sum()
+#checking duplicated value
+df.duplicated().sum()
+# looking describe dataset
+df.describe().round(2)
+# Describe price value
+df["price"].describe().round(2)
+df.drop(columns="car_ID",inplace=True)
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.linear_model import LinearRegression ,ARDRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.svm import SVR
+from xgboost import XGBRegressor
+from sklearn.preprocessing import LabelEncoder,StandardScaler
+object_data = df.select_dtypes(include='object')
+num_data = df.select_dtypes(exclude='object')
+enc = LabelEncoder()
+for i in range(0, object_data.shape[1]):
+object_data.iloc[:,i] = enc.fit_transform(object_data.iloc[:,i])
+object_data.dtypes
+full_data = pd.concat([num_data, object_data], axis = 1)
+full_data.info()
+full_data.corr()["price"].sort_values()
+data1=full_data[["highwaympg","citympg","CarName",'enginelocation','fuelsystem','b
+oreratio','wheelbase','drivewheel','carlength','carwidth','horsepower','curbweight','engin
+esize','price']]
+data1.head()
+#Defined X value and y value , and split the data train
+X = data1.drop(columns="price")
+y = data1["price"] # y = price
+# split the data train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.70)
+print("X Train : ", X_train.shape)
+print("X Test : ", X_test.shape)
+print("Y Train : ", y_train.shape)
+print("Y Test : ", y_test.shape)
+#Defined object from library Regression
+LR = LinearRegression()
+# make for loop for Regression
+model = [LR]
+d = {}
+for i in model:
+i.fit(X_train,y_train)
+ypred = i.predict(X_test)
+print(i,":",r2_score(y_test,ypred)*100)
+d.update({str(i):i.score(X_test,y_test)*100})
+# make graph about Accuracy
+import matplotlib.pyplot as plt
+plt.figure(figsize=(30, 15))
+plt.title("Algorithm vs Accuracy")
+plt.xlabel("Algorithm")
+plt.ylabel("Accuracy")
+plt.plot(d.keys(),d.values(),marker='o',color='red')
+plt.show()
+object_data = df.select_dtypes(include='object')
+num_data = df.select_dtypes(exclude='object')
+full_data = pd.concat([num_data, object_data], axis = 1)
+data1=full_data[["highwaympg","citympg","CarName",'enginelocation','fuelsystem','b
+oreratio','wheelbase','drivewheel','carlength','carwidth','horsepower','curbweight','engin
+esize','price']]
+data1.head()
+data1.describe()
